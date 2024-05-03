@@ -26,7 +26,7 @@ email = "stuart@biza.io"
 
 This specification outlines the technical requirements related to the delivery of Sharing Arrangement V2.
 
-Sharing Arrangement V2 is intended to be the next evolution of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] and incorporates modern and international standards aligned practices to achieve like for like outcomes. This specification takes significant inspiration from the [@!GRANT-MANAGEMENT] specification.
+Sharing Arrangement V2 is intended to be the next evolution of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] and incorporates modern and international standards aligned practices to achieve like for like outcomes. This specification takes significant inspiration from the [@!FAPI-GRANT-MANAGEMENT] specification.
 
 .# Notational Conventions
 
@@ -53,8 +53,8 @@ The following provisions apply to services delivered by Providers.
 
 In addition to the provisions outlined in [@!DATARIGHTPLUS-INFOSEC-BASELINE] the authorisation server:
 
-1. **SHALL** support [@!RAR] including the `authorization_details` payload described in [Sharing Authorization Request];
-2. **SHALL**, where the supplied `cdr_arrangement_id`, if provided, does not match the authenticated Consumer and as soon as practicable, return an OAuth2 Error
+1. **SHALL** support [@!RFC9396] including the `authorization_details` payload described in [Sharing Authorization Request];
+2. **SHALL**, where the supplied `cdr_arrangement_id`, if provided, does not match the authenticated Consumer and as soon as practicable, return an RFC6749 Error
 3. **SHALL** modify the existing authorisation grant referenced by the `cdr_arrangement_id`, if provided, while maintaining the `cdr_arrangement_id` between such authorisations
 4. **SHALL** revoke previously issued Access and refresh tokens when modifying existing authorisation grants;
 5. **SHALL** support the `sharing_arrangement_v2_supported` boolean as outlined in Section X of [@!DATARIGHTPLUS-DISCOVERY-V1-00]
@@ -62,7 +62,7 @@ In addition to the provisions outlined in [@!DATARIGHTPLUS-INFOSEC-BASELINE] the
 
 ### Sharing Request
 
-The authorisation server **SHALL** support [@!RAR] authorisations requests at the [@!PAR] endpoint with a `authorization_details` payload containing the following attributes:
+The authorisation server **SHALL** support [@!RFC9396] authorisations requests at the [@!RFC9126] endpoint with a `authorization_details` payload containing the following attributes:
 
 1. `grant_type` **REQUIRED**: Static value of `sharing_arrangement_v2` in order to provide JSON `oneOf` derivable parsing
 2. `sharing_arrangement_v2` **REQUIRED**: A JSON object containing the following attributes:
@@ -87,10 +87,10 @@ A non-normative example of the expected payload, representing a sharing request 
 }
 ```
 
-### PAR Response
+### RFC9126 Response
 
-It is often desirable for an Initiator to be able to ascertain, prior to completion of an authorisation by a Consumer, the status of the authorisation, consequently, in addition to the provisions of [@!PAR] and where a valid [Sharing Request] is received:
-1. **SHOULD** disclose an assigned `agreement_id` attribute within the [@!PAR] endpoint
+It is often desirable for an Initiator to be able to ascertain, prior to completion of an authorisation by a Consumer, the status of the authorisation, consequently, in addition to the provisions of [@!RFC9126] and where a valid [Sharing Request] is received:
+1. **SHOULD** disclose an assigned `agreement_id` attribute within the [@!RFC9126] endpoint
 2. **SHALL** ensure the `agreement_id` value remains consistent on completion of the previously specified [Authorisation Request]
 3. **SHALL**, where the [Sharing Request] contains a reference to an existing `agreement_id` retain this `agreement_id` unchanged
 4. **MAY** discard `agreement_id` values for which authorisation has not been completed within a reasonable period of time
@@ -107,7 +107,7 @@ A non-normative example is provided as follows:
 
 ### Token Response
 
-The authorisation server **SHALL** support [@!RAR] responses at its [@!OAUTH2] token response endpoint with a `authorization_details` payload containing the following attributes:
+The authorisation server **SHALL** support [@!RFC9396] responses at its [@!RFC6749] token response endpoint with a `authorization_details` payload containing the following attributes:
 
 1. `grant_type` **REQUIRED**: Static value of `sharing_arrangement_v2` in order to provide JSON `oneOf` derivable parsing
 2. `sharing_arrangement_v2` **REQUIRED**: A JSON object containing the following attributes:
@@ -143,8 +143,8 @@ In order to maximise backward compatibility and facilitate orderly transition it
 1. consider compliant `authorization_details` payloads as authoritative;
 2. fallback to the behaviours outlined within Section 3 of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] where `authorization_details` is absent;
 3. generate `agreement_id` values equal to `cdr_arrangement_id` values for `grant_type` of `sharing_arrangement_v2`
-4. return an [@!OAUTH2] token response `scopes`  parameter equivalent to the `data_sets` specified in [Sharing Authorization Response];
-5. specify the [@!OAUTH2] `exp` value visible in Refresh Token introspection responses to be equal to `sharing_expires_at`;
+4. return an [@!RFC6749] token response `scopes`  parameter equivalent to the `data_sets` specified in [Sharing Authorization Response];
+5. specify the [@!RFC6749] `exp` value visible in Refresh Token introspection responses to be equal to `sharing_expires_at`;
 6. Perform the same functions, in the same way, as those previously outlined in [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] for relevant actions taken on authorization grants of `sharing_arrangement_v2` type
 
 # Initiator
@@ -162,7 +162,7 @@ In addition to the provisions outlined in Section 4 of [@!DATARIGHTPLUS-INFOSEC-
 
 In order to maximise backward compatibility and facilitate orderly transition it is necessary to ensure participants continue to support historical behaviours. Therefore, the authorisation client **SHALL** support the provisions outlined in Section 4 of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00]. 
 
-This provision results in the duplication of the parameters of the request in both formats. As a result the following non-normative example is provided for the Request Object submitted to the [@!PAR] endpoint:
+This provision results in the duplication of the parameters of the request in both formats. As a result the following non-normative example is provided for the Request Object submitted to the [@!RFC9126] endpoint:
 
 ```json
 {
@@ -185,7 +185,7 @@ This provision results in the duplication of the parameters of the request in bo
 
 # Implementation Considerations
 
-TODO: Agreement Identifier expiration from PAR
+TODO: Agreement Identifier expiration from RFC9126
 
 # Security Considerations
 
@@ -203,4 +203,33 @@ The Agreement Identifier **SHALL NOT** be guessable, derivable nor identify the 
 
 <reference anchor="JWT" target="https://datatracker.ietf.org/doc/html/rfc7519"> <front> <title>JSON Web Token (JWT)</title> <author fullname="M. Jones"> <organization>Microsoft</organization> </author> <author initials="J." surname="Bradley" fullname="John Bradley"> <organization>Ping Identity</organization> </author><author fullname="N. Sakimura"> <organization>Nomura Research Institute</organization> </author> <date month="May" year="2015"/></front> </reference>
 
+<reference anchor="RFC6749" target="https://datatracker.ietf.org/doc/html/rfc6749"> <front> <title>The OAuth 2.0 Authorization Framework</title><author fullname="D. Hardt"> <organization>Microsoft</organization> </author><date month="Oct" year="2012"/></front> </reference>
 
+<reference anchor="DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00" target="https://datarightplus.github.io/datarightplus-sharing-arrangement-v1/draft-authors-datarightplus-sharing-arrangement-v1-00/draft-authors-datarightplus-sharing-arrangement-v1.html"> <front><title>DataRight+: Sharing Arrangement V1</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author><author initials="B." surname="Kolera" fullname="Ben Kolera"><organization>Biza.io</organization></author></front> </reference>
+
+<reference anchor="DATARIGHTPLUS-DISCOVERY-V1-00" target="https://datarightplus.github.io/datarightplus-discovery-v1/draft-authors-datarightplus-discovery-v1-00/draft-authors-datarightplus-discovery-v1-v1.html"> <front><title>DataRight+: Provider Discovery V1</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author></front> </reference>
+
+
+<reference anchor="RFC6749" target="https://datatracker.ietf.org/doc/html/rfc6749"> <front> <title>The OAuth 2.0 Authorization Framework</title><author fullname="D. Hardt"> <organization>Microsoft</organization> </author><date month="Oct" year="2012"/></front> </reference>
+
+<reference anchor="RFC9396" target="https://datatracker.ietf.org/doc/html/rfc9396"> <front> <title>Grant Management for OAuth 2.0</title><author fullname="T. Lodderstedt"> <organization>yes.com</organization> </author><author fullname="S. Low"> <organization>Biza.io</organization> </author><author fullname="D. Postnikov"> <organization>Independent</organization> </author><date month="Jul" year="2021"/></front> </reference>
+
+<reference anchor="FAPI-GRANT-MANAGEMENT" target="https://openid.net/specs/fapi-grant-management.html"> <front> <title>The OAuth 2.0 Authorization Framework</title><author fullname="D. Hardt"> <organization>Microsoft</organization> </author><date month="Oct" year="2012"/></front> </reference>
+
+<reference anchor="RFC9126" target="https://datatracker.ietf.org/doc/html/rfc9126"> <front> <title>OAuth 2.0 Pushed Authorization Requests</title>
+<author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
+      <organization>yes.com</organization>
+    </author>
+    <author initials="B." surname="Campbell" fullname="Brian Campbell">
+      <organization>Ping Identity</organization>
+    </author>
+    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
+      <organization showOnFrontPage="true">NAT.Consulting</organization>
+    </author>
+    <author initials="D." surname="Tonge" fullname="Dave Tonge">
+      <organization showOnFrontPage="true">Moneyhub Financial Technology</organization>
+    </author>
+    <author initials="F." surname="Skokan" fullname="Filip Skokan">
+      <organization showOnFrontPage="true">Auth0</organization>
+    </author>
+    <date month="09" year="2021"/></front></reference>
