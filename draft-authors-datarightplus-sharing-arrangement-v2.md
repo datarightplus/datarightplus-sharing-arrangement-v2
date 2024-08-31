@@ -24,9 +24,9 @@ email = "stuart@biza.io"
 
 .# Abstract
 
-This specification outlines the technical requirements related to the delivery of Sharing Arrangement V2.
+This specification outlines the technical requirements related to the delivery of an enhanced establishment process for data sharing arrangements under DataRight+ and the Consumer Data Right.
 
-Sharing Arrangement V2 is intended to be the next evolution of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] and incorporates modern and international standards aligned practices to achieve like for like outcomes. This specification takes significant inspiration from the [@!FAPI-GRANT-MANAGEMENT] specification.
+Sharing Arrangement V2 is intended to be the next evolution of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] and incorporates modern and international standards aligned practices to achieve like for like outcomes. This specification takes significant inspiration from the [@!FAPI-GRANT-MANAGEMENT] specification and the original intent based pattern first presented within the UK Open Banking scheme.
 
 .# Notational Conventions
 
@@ -36,14 +36,28 @@ The keywords  "**REQUIRED**", "**SHALL**", "**SHALL NOT**", "**SHOULD**", "**SHO
 
 # Scope
 
-The scope of this specification is focused on describing the authorisation related components of establishing the equivalent of a CDR Sharing Arrangement. While this specification achieves the same objectives as those prescribed within [@!CDS] it avoids the ecosystem specific components in favour of a more extensible and international standards aligned mechanisms. To maintain ecosystem interoperability, specific provisions related to [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] are included where concurrent support is intended.
+The scope of this specification is focused on describing the authorisation related components of establishing an authentication and authorisation context for data sharing under the DataRight+ framework.  This specification achieves the same objectives as those prescribed within [@!CDS] but avoids the ecosystem specific components in favour of a more extensible and international standards aligned mechanisms.
 
 # Terms & Definitions
 
-This specification uses the terms "Consumer", "Provider", "Initiator", "Personally Identifiable Information (PII)",
+This specification uses the terms "Agreement Identifier", Consumer", "Provider", "Initiator", "Personally Identifiable Information (PII)",
 "Pairwise Pseudonymous Identifier (PPID)", "Initiator", "CDR Sharing Arrangement" and "CDR Sharing Agreement Identifier"  as defined by [@!DATARIGHTPLUS-ROSETTA].
 
-Agreement Identifier: TODO
+# High Level Process
+
+This document, as extended further in OpenAPI format within [@!DATARIGHTPLUS-REDOCLY], describes the endpoints to deliver the Sharing Arrangement V2 capability. The current approach to data sharing within the Consumer Data Right is brittle and does not provide sufficient feedback as to the status of sharing requests as they are handed over from Initiator to the Provider. The existing sharing establishment process also assumes a live establishment rather than a potentially asynchronous, back-channel or machine to machine (IoT) authorisation approach.
+
+At a high level the process expected to be followed through the implementation of this specification is:
+
+1. Initiator utilises a client credentials grant to obtain a token from the Provider;
+2. Initiator calls the Request Sharing Agreement endpoint and obtains an `actionId` in the initial status of `PENDING`;
+3. Initiator submits a pushed authorisation request with a Request Object containing the `urn:dio:action_id` parameter with a value equal to the `actionId` returned in (2)
+4. Initiator redirects the Consumer user-agent to complete the authorisation process
+5. On completion of the authorisation process:
+   1. the Provider, if not already assigned, assigns an `agreementId` to the associated `actionId`
+   2. the Initiator performs `authorization_code` token exchange to access the Provider Resource Server resources
+
+_Note:_ At any time before, during or after the authorisation process the Initiator can use the Get Sharing Agreement endpoint provided by the Resource Server utilising the obtained `actionId`.
 
 # Provider
 
@@ -53,99 +67,90 @@ The following provisions apply to services delivered by Providers.
 
 In addition to the provisions outlined in [@!DATARIGHTPLUS-INFOSEC-BASELINE] the authorisation server:
 
-1. **SHALL** support [@!RFC9396] including the `authorization_details` payload described in [Sharing Authorization Request];
-2. **SHALL**, where the supplied `cdr_arrangement_id`, if provided, does not match the authenticated Consumer and as soon as practicable, return an RFC6749 Error
-3. **SHALL** modify the existing authorisation grant referenced by the `cdr_arrangement_id`, if provided, while maintaining the `cdr_arrangement_id` between such authorisations
-4. **SHALL** revoke previously issued Access and refresh tokens when modifying existing authorisation grants;
-5. **SHALL** support the `sharing_arrangement_v2_supported` boolean as outlined in Section X of [@!DATARIGHTPLUS-DISCOVERY-V1-00]
-6. **SHOULD** support the `agreement_management_endpoint` attribute as outlined in Section X of [@!DATARIGHTPLUS-DISCOVERY-V1-00]
+1. **SHALL** support the `dio:sharing` authorisation scope;
+2. **SHALL** include the `dio:sharing` authorisation scope within Dynamic Client Registration responses;
 
-### Sharing Request
+### Request Object
 
-The authorisation server **SHALL** support [@!RFC9396] authorisations requests at the [@!RFC9126] endpoint with a `authorization_details` payload containing the following attributes:
+The request object submitted to the authorisation server:
 
-1. `grant_type` **REQUIRED**: Static value of `sharing_arrangement_v2` in order to provide JSON `oneOf` derivable parsing
-2. `sharing_arrangement_v2` **REQUIRED**: A JSON object containing the following attributes:
-   1. `sharing_duration` **REQUIRED**: An integer parameter between `0` and `31536000` representing the number of seconds requested for data sharing. 
-   2. `agreement_id` **OPTIONAL**: A reference to a previously established Agreement Identifier 
-   3. `data_sets` **REQUIRED**: A list of Data Sets, in authorisation scope format.
+1. **SHALL** support an optional string parameter `urn:dio:action_id` referencing a valid [Action Identifier];
+2. **SHALL** reject requests containing a `urn:dio:action_id` parameter that is unknown, expired or not associated with the requesting Initiator;
 
-A non-normative example of the expected payload, representing a sharing request for 24hrs to extend an existing grant, is provided below:
+#### Example
+
+The following is a non-normative example of a decoded request object requesting authorisation for a previously lodged `actionId`
 
 ```json
 {
-    "authorization_details": {
-       "grant_type": "sharing_arrangement_v2",
-       "sharing_arrangement_v2": {
-          "sharing_duration": 86400,
-          "agreement_id": "c4ac0c9d0-457d-4578-b0cd-52e443ae13c5",
-          "data_sets": [
-             "common:customer.basic:read common:customer.detail:read"
-          ]
-       }
+  "iss": "33ff17d6-d967-4823-a4d3-1206fd2fff3f",
+  "exp": 1725090872,
+  "nbf": 1725090872,
+  "aud": "https://www.provider.com.au",
+  "response_type": "code",
+  "response_mode": "jwt",
+  "client_id": "33ff17d6-d967-4823-a4d3-1206fd2fff3f",
+  "redirect_uri": "https://www.recipient.com.au/coolstuff",
+  "scope": "openid",
+  "claims": {
+    "urn:dio:action_id": "496a3ba7-04b4-4362-b775-9e0433e48eea",
+    "id_token": {
+      "acr": {
+        "essential": true,
+        "values": ["urn:cds.au:cdr:3"]
+      }
+    },
+    "userinfo": {
+      "given_name": null,
+      "family_name": null
     }
+  },
+  "code_challenge": "rerbvXfTDYNECzwayM8-SLCWU1FDzBnqMCv1RB5AudU",
+  "code_challenge_method": "S256"
 }
 ```
 
-### RFC9126 Response
+### Claims
 
-It is often desirable for an Initiator to be able to ascertain, prior to completion of an authorisation by a Consumer, the status of the authorisation, consequently, in addition to the provisions of [@!RFC9126] and where a valid [Sharing Request] is received:
-1. **SHOULD** disclose an assigned `agreement_id` attribute within the [@!RFC9126] endpoint
-2. **SHALL** ensure the `agreement_id` value remains consistent on completion of the previously specified [Authorisation Request]
-3. **SHALL**, where the [Sharing Request] contains a reference to an existing `agreement_id` retain this `agreement_id` unchanged
-4. **MAY** discard `agreement_id` values for which authorisation has not been completed within a reasonable period of time
+The authorisation server:
 
-A non-normative example is provided as follows:
-
-```json
-{
-   "request_uri": "urn:abc/efg",
-   "expires_in": 60,
-   "agreement_id": "c4ac0c9d0-457d-4578-b0cd-52e443ae13c5"
-}
-```
-
-### Token Response
-
-The authorisation server **SHALL** support [@!RFC9396] responses at its [@!RFC6749] token response endpoint with a `authorization_details` payload containing the following attributes:
-
-1. `grant_type` **REQUIRED**: Static value of `sharing_arrangement_v2` in order to provide JSON `oneOf` derivable parsing
-2. `sharing_arrangement_v2` **REQUIRED**: A JSON object containing the following attributes:
-   1. `sharing_expires_at` **REQUIRED**: An integer parameter representing the epoch of when the attached Grant expires
-   2. `agreement_id` **REQUIRED**: The attached Agreement Identifier
-   3. `data_sets` **REQUIRED**: A list of Data Sets, in authorisation scope format
-   4. `account_ids` **OPTIONAL**: A list of Account Identifiers included within this Agreement
-
-A non-normative example of the expected payload, representing a sharing request for 24hrs to extend an existing grant, is provided below:
-
-```json
-{
-    "authorization_details": {
-       "agreement_id": "c4ac0c9d0-457d-4578-b0cd-52e443ae13c5",
-       "arrangement_type": "sharing_arrangement_v2",
-       "sharing_arrangement_v2": {
-          "sharing_expires_at": 12345678,
-          "data_sets": [
-             "common:customer.basic:read common:customer.detail:read"
-          ],
-          "account_ids": [
-             "b7ec0c9d0-457d-4578-b0cd-52e443a78bef",
-             "3faac0c9d0-457d-4578-b0cd-52e443ae90afa",
-          ]
-       }
-    }
-}
-```
+1. **SHALL** include within the Introspection Endpoint response:
+    1. the `exp` claim, with a value equal to the expiry time of the underlying Sharing Agreement and;
+    2. the `urn:dio:action_id` claim, containing the assigned [Action Identifier];
 
 ### CDR Arrangement V1 Compatibility
 
-In order to maximise backward compatibility and facilitate orderly transition it is necessary to ensure participants continue to support historical behaviours. Therefore, where the authorization server supports this specification and [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] concurrently it **SHALL**:
-1. consider compliant `authorization_details` payloads as authoritative;
-2. fallback to the behaviours outlined within Section 3 of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] where `authorization_details` is absent;
-3. generate `agreement_id` values equal to `cdr_arrangement_id` values for `grant_type` of `sharing_arrangement_v2`
-4. return an [@!RFC6749] token response `scopes`  parameter equivalent to the `data_sets` specified in [Sharing Authorization Response];
-5. specify the [@!RFC6749] `exp` value visible in Refresh Token introspection responses to be equal to `sharing_expires_at`;
-6. Perform the same functions, in the same way, as those previously outlined in [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00] for relevant actions taken on authorization grants of `sharing_arrangement_v2` type
+In order to maximise backward compatibility and facilitate orderly transition for endpoints already implemented the Authorisation Server **SHALL** ensure that the following authorisation scopes are mapped to Data Cluster values which are successfully authorised:
+
+| `EnumDataClusterV1` Value                      | Authorization Scope                            |
+|------------------------------------------------|------------------------------------------------|
+| `OPENID`                                       | `openid`                                       |
+| `PROFILE`                                      | `profile`                                      |
+| `BANK_ACCOUNTS_BASIC_READ`                     | `bank:accounts.basic:read`                     |
+| `BANK_ACCOUNTS_DETAIL_READ`                    | `bank:accounts.detail:read`                    |
+| `BANK_TRANSACTIONS_READ`                       | `bank:transactions:read`                       |
+| `BANK_REGULAR_PAYMENTS_READ`                   | `bank:regular_payments:read`                   |
+| `BANK_PAYEES_READ`                             | `bank:payees:read`                             |
+| `ENERGY_ACCOUNTS_BASIC_READ`                   | `energy:accounts.basic:read`                   |
+| `ENERGY_ACCOUNTS_DETAIL_READ`                  | `energy:accounts.detail:read`                  |
+| `ENERGY_ACCOUNTS_CONCESSIONS_READ`             | `energy:accounts.concessions:read`             |
+| `ENERGY_ACCOUNTS_PAYMENTSCHEDULE_READ`         | `energy:accounts.paymentschedule:read`         |
+| `ENERGY_BILLING_READ`                          | `energy:billing:read`                          |
+| `ENERGY_ELECTRICITY_SERVICEPOINTS_BASIC_READ`  | `energy:electricity.servicepoints.basic:read`  |
+| `ENERGY_ELECTRICITY_SERVICEPOINTS_DETAIL_READ` | `energy:electricity.servicepoints.detail:read` |
+| `ENERGY_ELECTRICITY_DER_READ`                  | `energy:electricity.der:read`                  |
+| `ENERGY_ELECTRICITY_USAGE_READ`                | `energy:electricity.usage:read`                |
+| `COMMON_CUSTOMER_BASIC_READ`                   | `common:customer.basic:read`                   |
+| `COMMON_CUSTOMER_DETAIL_READ`                  | `common:customer.detail:read`                  |
+
+## Resource Server
+
+The Provider Resource Server:
+1. **SHALL** support the `requestDataSharingAgreement` and `getDataSharingAgreement` endpoints as described in [@!DATARIGHTPLUS-REDOCLY];
+2. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1-01] and advertise the `requestDataSharingAgreement` and `getDataSharingAgreement` endpoints
+3. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Agreement requests
+4. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
+5. **MAY** support record filtering by date (`oldestDate`/`newestDate`) and, if supported, include the `SUPPORTS_DATE_FILTER` flag at the `requestDataSharingAgreement` endpoint
 
 # Initiator
 
@@ -155,41 +160,17 @@ The following provisions apply to participants operating Initiators.
 
 In addition to the provisions outlined in Section 4 of [@!DATARIGHTPLUS-INFOSEC-BASELINE] the Initiator authorisation client:
 
-1. **SHALL** support the [Rich Authorization Request];
-2. **SHALL** only issue authorisation requests defined in this specification where the Provider has advertised `sharing_arrangement_v2_supported` via the discovery endpoint specified within [@!DATARIGHTPLUS-DISCOVERY-V1-00]
-
-### CDR Arrangement V1 Compatibility
-
-In order to maximise backward compatibility and facilitate orderly transition it is necessary to ensure participants continue to support historical behaviours. Therefore, the authorisation client **SHALL** support the provisions outlined in Section 4 of [@!DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00]. 
-
-This provision results in the duplication of the parameters of the request in both formats. As a result the following non-normative example is provided for the Request Object submitted to the [@!RFC9126] endpoint:
-
-```json
-{
-   "scopes": "common:customer.basic:read",
-   "sharing_duration": 86400,
-   "cdr_arrangement_id": "c4ac0c9d0-457d-4578-b0cd-52e443ae13c5",
-   "authorization_details": {
-      "grant_type": "sharing_arrangement_v2",
-      "sharing_arrangement_v2": {
-         "sharing_duration": 86400,
-         "agreement_id": "c4ac0c9d0-457d-4578-b0cd-52e443ae13c5",
-         "data_sets": [
-            "common:customer.basic:read"
-         ]
-      }
-   }
-}
-
-```
+1. **SHALL** support the Initiator provisions of [@!DATARIGHTPLUS-DISCOVERY-V1-01] to discover the `getDataSharingAgreement` and `requestDataSharingAgreement` endpoints;
+2. **SHALL** perform a Dynamic Client Registration update, as described in [@!DATARIGHTPLUS-ADMISSION-CONTROL-00], to be granted access to the `dio:sharing` scope;
+3. **SHALL** only include optional Request Sharing Agreement parameters if they are advertised within the Provider discovery document
 
 # Implementation Considerations
 
-TODO: Agreement Identifier expiration from RFC9126
+This specification does not explicitly state how long an assigned Action Identifier persists for however it is expected that an Initiator shall be able to reference an Action Identifier while the associated authorisation is still active and for a significant period (more than a year) after it becomes inactive.
 
 # Security Considerations
 
-The Agreement Identifier **SHALL NOT** be guessable, derivable nor identify the Consumer.
+The Action Identifier **SHALL NOT** be guessable, derivable nor identify the Consumer.
 
 {backmatter}
 
@@ -197,39 +178,15 @@ The Agreement Identifier **SHALL NOT** be guessable, derivable nor identify the 
 
 <reference anchor="DATARIGHTPLUS-ROSETTA" target="https://datarightplus.github.io/datarightplus-rosetta/draft-authors-datarightplus-rosetta.html"> <front><title>DataRight+ Rosetta Stone</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author></front> </reference>
 
+<reference anchor="DATARIGHTPLUS-REDOCLY" target="https://datarightplus.github.io/datarightplus-redocly"> <front><title>DataRight+: Redocly</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author><author initials="B." surname="Kolera" fullname="Ben Kolera"><organization>Biza.io</organization></author>
+<author initials="W." surname="Cai" fullname="Wei Cai"><organization>Biza.io</organization></author></front> </reference>
+
 <reference anchor="DATARIGHTPLUS-INFOSEC-BASELINE" target="https://datarightplus.github.io/datarightplus-infosec-baseline/draft-authors-datarightplus-infosec-baseline.html"> <front><title>DataRight+ Security Profile: Baseline</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author></front> </reference>
 
-<reference anchor="OIDC-Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html"> <front> <title>OpenID Connect Discovery 1.0 incorporating errata set 1</title> <author initials="N." surname="Sakimura" fullname="Nat Sakimura"> <organization>NRI</organization> </author> <author initials="J." surname="Bradley" fullname="John Bradley"> <organization>Ping Identity</organization> </author> <author initials="M." surname="Jones" fullname="Mike Jones"> <organization>Microsoft</organization> </author> <author initials="E." surname="Jay"> <organization>Illumila</organization> </author><date day="8" month="Nov" year="2014"/> </front> </reference>
-
-<reference anchor="JWT" target="https://datatracker.ietf.org/doc/html/rfc7519"> <front> <title>JSON Web Token (JWT)</title> <author fullname="M. Jones"> <organization>Microsoft</organization> </author> <author initials="J." surname="Bradley" fullname="John Bradley"> <organization>Ping Identity</organization> </author><author fullname="N. Sakimura"> <organization>Nomura Research Institute</organization> </author> <date month="May" year="2015"/></front> </reference>
-
-<reference anchor="RFC6749" target="https://datatracker.ietf.org/doc/html/rfc6749"> <front> <title>The OAuth 2.0 Authorization Framework</title><author fullname="D. Hardt"> <organization>Microsoft</organization> </author><date month="Oct" year="2012"/></front> </reference>
+<reference anchor="DATARIGHTPLUS-ADMISSION-CONTROL-00" target="https://datarightplus.github.io/datarightplus-admission-control-baseline/draft-authors-datarightplus-admission-control-00/draft-authors-datarightplus-admission-control.html"> <front><title>DataRight+: Admission Control Baseline</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author><author initials="B." surname="Kolera" fullname="Ben Kolera"><organization>Biza.io</organization></author></front> </reference>
 
 <reference anchor="DATARIGHTPLUS-SHARING-ARRANGEMENT-V1-00" target="https://datarightplus.github.io/datarightplus-sharing-arrangement-v1/draft-authors-datarightplus-sharing-arrangement-v1-00/draft-authors-datarightplus-sharing-arrangement-v1.html"> <front><title>DataRight+: Sharing Arrangement V1</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author><author initials="B." surname="Kolera" fullname="Ben Kolera"><organization>Biza.io</organization></author></front> </reference>
 
-<reference anchor="DATARIGHTPLUS-DISCOVERY-V1-00" target="https://datarightplus.github.io/datarightplus-discovery-v1/draft-authors-datarightplus-discovery-v1-00/draft-authors-datarightplus-discovery-v1-v1.html"> <front><title>DataRight+: Provider Discovery V1</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author></front> </reference>
-
-
-<reference anchor="RFC6749" target="https://datatracker.ietf.org/doc/html/rfc6749"> <front> <title>The OAuth 2.0 Authorization Framework</title><author fullname="D. Hardt"> <organization>Microsoft</organization> </author><date month="Oct" year="2012"/></front> </reference>
-
-<reference anchor="RFC9396" target="https://datatracker.ietf.org/doc/html/rfc9396"> <front> <title>Grant Management for OAuth 2.0</title><author fullname="T. Lodderstedt"> <organization>yes.com</organization> </author><author fullname="S. Low"> <organization>Biza.io</organization> </author><author fullname="D. Postnikov"> <organization>Independent</organization> </author><date month="Jul" year="2021"/></front> </reference>
+<reference anchor="DATARIGHTPLUS-DISCOVERY-V1-01" target="https://datarightplus.github.io/datarightplus-discovery-v1/draft-authors-datarightplus-discovery-v1-01/draft-authors-datarightplus-discovery-v1.html"> <front><title>DataRight+: Provider Discovery V1</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author></front> </reference>
 
 <reference anchor="FAPI-GRANT-MANAGEMENT" target="https://openid.net/specs/fapi-grant-management.html"> <front> <title>The OAuth 2.0 Authorization Framework</title><author fullname="D. Hardt"> <organization>Microsoft</organization> </author><date month="Oct" year="2012"/></front> </reference>
-
-<reference anchor="RFC9126" target="https://datatracker.ietf.org/doc/html/rfc9126"> <front> <title>OAuth 2.0 Pushed Authorization Requests</title>
-<author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-      <organization>yes.com</organization>
-    </author>
-    <author initials="B." surname="Campbell" fullname="Brian Campbell">
-      <organization>Ping Identity</organization>
-    </author>
-    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
-      <organization showOnFrontPage="true">NAT.Consulting</organization>
-    </author>
-    <author initials="D." surname="Tonge" fullname="Dave Tonge">
-      <organization showOnFrontPage="true">Moneyhub Financial Technology</organization>
-    </author>
-    <author initials="F." surname="Skokan" fullname="Filip Skokan">
-      <organization showOnFrontPage="true">Auth0</organization>
-    </author>
-    <date month="09" year="2021"/></front></reference>
