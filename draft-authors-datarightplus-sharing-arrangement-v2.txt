@@ -94,6 +94,9 @@ Table of Contents
    Arrangement" and "CDR Sharing Agreement Identifier" as defined by
    [DATARIGHTPLUS-ROSETTA].
 
+   Action Identifier  A unique and discrete identifier for a given
+      action, typically lodged at a resource server endpoint.
+
 3.  High Level Process
 
    This document, as extended further in OpenAPI format within
@@ -244,18 +247,22 @@ Table of Contents
 
 4.2.  Resource Server
 
-   The Provider Resource Server: 1.  SHALL support the
-   requestDataSharingAgreement and getDataSharingAgreement endpoints as
-   described in [DATARIGHTPLUS-REDOCLY-ID2]; 2.  SHALL support
-   [DATARIGHTPLUS-DISCOVERY-V1-01] and advertise the
-   requestDataSharingAgreement and getDataSharingAgreement endpoints 3.
-   SHALL support providing an existing agreementId in order to extend an
-   existing agreement in subsequent Request Sharing Agreement requests
+   The Provider Resource Server:
+
+   1.  SHALL support the requestDataSharingAgreement and
+       getDataSharingAgreement endpoints as described in
+       [DATARIGHTPLUS-REDOCLY-ID2];
+   2.  SHALL support [DATARIGHTPLUS-DISCOVERY-V1-01] and advertise the
+       requestDataSharingAgreement and getDataSharingAgreement endpoints
+   3.  SHALL support providing an existing agreementId in order to
+       extend an existing agreement in subsequent Request Sharing
+       Agreement requests
    4.  MAY support Consumer Type (consumerType) authorisation filtering
-   and, if supported, include the SUPPORTS_CONSUMER_TYPE flag at the
-   requestDataSharingAgreement endpoint 5.  MAY support record filtering
-   by date (oldestDate/newestDate) and, if supported, include the
-   SUPPORTS_DATE_FILTER flag at the requestDataSharingAgreement endpoint
+       and, if supported, include the SUPPORTS_CONSUMER_TYPE flag at the
+       requestDataSharingAgreement endpoint
+   5.  MAY support record filtering by date (oldestDate/newestDate) and,
+       if supported, include the SUPPORTS_DATE_FILTER flag at the
+       requestDataSharingAgreement endpoint
 
 5.  Initiator
 

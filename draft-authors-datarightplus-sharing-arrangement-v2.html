@@ -1183,6 +1183,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-2-1">This specification uses the terms "Agreement Identifier", Consumer", "Provider", "Initiator", "Personally Identifiable Information (PII)",
 "Pairwise Pseudonymous Identifier (PPID)", "Initiator", "CDR Sharing Arrangement" and "CDR Sharing Agreement Identifier"  as defined by <span>[<a href="#DATARIGHTPLUS-ROSETTA" class="cite xref">DATARIGHTPLUS-ROSETTA</a>]</span>.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-2-2">
+        <dt id="section-2-2.1">Action Identifier</dt>
+        <dd style="margin-left: 1.5em" id="section-2-2.2">A unique and discrete identifier for a given action, typically lodged at a resource server endpoint.<a href="#section-2-2.2" class="pilcrow">¶</a>
+</dd>
+      <dd class="break"></dd>
+</dl>
 </section>
 </div>
 <div id="high-level-process">
@@ -1478,12 +1484,24 @@ svg :is([fill="white"], [fill^="#fff"]) {
         <h3 id="name-resource-server">
 <a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-resource-server" class="section-name selfRef">Resource Server</a>
         </h3>
-<p id="section-4.2-1">The Provider Resource Server:
-1. <span class="bcp14">SHALL</span> support the <code>requestDataSharingAgreement</code> and <code>getDataSharingAgreement</code> endpoints as described in <span>[<a href="#DATARIGHTPLUS-REDOCLY-ID2" class="cite xref">DATARIGHTPLUS-REDOCLY-ID2</a>]</span>;
-2. <span class="bcp14">SHALL</span> support <span>[<a href="#DATARIGHTPLUS-DISCOVERY-V1-01" class="cite xref">DATARIGHTPLUS-DISCOVERY-V1-01</a>]</span> and advertise the <code>requestDataSharingAgreement</code> and <code>getDataSharingAgreement</code> endpoints
-3. <span class="bcp14">SHALL</span> support providing an existing <code>agreementId</code> in order to extend an existing agreement in subsequent Request Sharing Agreement requests
-4. <span class="bcp14">MAY</span> support Consumer Type (<code>consumerType</code>) authorisation filtering and, if supported, include the <code>SUPPORTS_CONSUMER_TYPE</code> flag at the <code>requestDataSharingAgreement</code> endpoint
-5. <span class="bcp14">MAY</span> support record filtering by date (<code>oldestDate</code>/<code>newestDate</code>) and, if supported, include the <code>SUPPORTS_DATE_FILTER</code> flag at the <code>requestDataSharingAgreement</code> endpoint<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-1">The Provider Resource Server:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-4.2-2">
+<li id="section-4.2-2.1">
+            <span class="bcp14">SHALL</span> support the <code>requestDataSharingAgreement</code> and <code>getDataSharingAgreement</code> endpoints as described in <span>[<a href="#DATARIGHTPLUS-REDOCLY-ID2" class="cite xref">DATARIGHTPLUS-REDOCLY-ID2</a>]</span>;<a href="#section-4.2-2.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-4.2-2.2">
+            <span class="bcp14">SHALL</span> support <span>[<a href="#DATARIGHTPLUS-DISCOVERY-V1-01" class="cite xref">DATARIGHTPLUS-DISCOVERY-V1-01</a>]</span> and advertise the <code>requestDataSharingAgreement</code> and <code>getDataSharingAgreement</code> endpoints<a href="#section-4.2-2.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-4.2-2.3">
+            <span class="bcp14">SHALL</span> support providing an existing <code>agreementId</code> in order to extend an existing agreement in subsequent Request Sharing Agreement requests<a href="#section-4.2-2.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-4.2-2.4">
+            <span class="bcp14">MAY</span> support Consumer Type (<code>consumerType</code>) authorisation filtering and, if supported, include the <code>SUPPORTS_CONSUMER_TYPE</code> flag at the <code>requestDataSharingAgreement</code> endpoint<a href="#section-4.2-2.4" class="pilcrow">¶</a>
+</li>
+          <li id="section-4.2-2.5">
+            <span class="bcp14">MAY</span> support record filtering by date (<code>oldestDate</code>/<code>newestDate</code>) and, if supported, include the <code>SUPPORTS_DATE_FILTER</code> flag at the <code>requestDataSharingAgreement</code> endpoint<a href="#section-4.2-2.5" class="pilcrow">¶</a>
+</li>
+        </ol>
 </section>
 </div>
 </section>
