@@ -4,8 +4,8 @@
 
 datarightplus                                                     S. Low
 Internet-Draft                                                   Biza.io
-Intended status: Experimental                             31 August 2024
-Expires: 4 March 2025
+Intended status: Experimental                           2 September 2024
+Expires: 6 March 2025
 
 
                    DataRight+: Sharing Arrangement V2
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 March 2025.
+   This Internet-Draft will expire on 6 March 2025.
 
 Copyright Notice
 
@@ -97,7 +97,7 @@ Table of Contents
 3.  High Level Process
 
    This document, as extended further in OpenAPI format within
-   [DATARIGHTPLUS-REDOCLY], describes the endpoints to deliver the
+   [DATARIGHTPLUS-REDOCLY-ID2], describes the endpoints to deliver the
    Sharing Arrangement V2 capability.  The current approach to data
    sharing within the Consumer Data Right is brittle and does not
    provide sufficient feedback as to the status of sharing requests as
@@ -246,7 +246,7 @@ Table of Contents
 
    The Provider Resource Server: 1.  SHALL support the
    requestDataSharingAgreement and getDataSharingAgreement endpoints as
-   described in [DATARIGHTPLUS-REDOCLY]; 2.  SHALL support
+   described in [DATARIGHTPLUS-REDOCLY-ID2]; 2.  SHALL support
    [DATARIGHTPLUS-DISCOVERY-V1-01] and advertise the
    requestDataSharingAgreement and getDataSharingAgreement endpoints 3.
    SHALL support providing an existing agreementId in order to extend an
@@ -314,9 +314,10 @@ Table of Contents
               baseline/draft-authors-datarightplus-infosec-
               baseline.html>.
 
-   [DATARIGHTPLUS-REDOCLY]
-              Low, S., Kolera, B., and W. Cai, "DataRight+: Redocly",
-              <https://datarightplus.github.io/datarightplus-redocly>.
+   [DATARIGHTPLUS-REDOCLY-ID2]
+              Low, S., Kolera, B., and W. Cai, "DataRight+: Redocly
+              (ID2)", <https://datarightplus.github.io/datarightplus-
+              redocly/?v=ID2>.
 
    [DATARIGHTPLUS-ROSETTA]
               Low, S., "DataRight+ Rosetta Stone",
