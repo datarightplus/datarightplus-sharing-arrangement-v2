@@ -43,6 +43,10 @@ The scope of this specification is focused on describing the authorisation relat
 This specification uses the terms "Agreement Identifier", Consumer", "Provider", "Initiator", "Personally Identifiable Information (PII)",
 "Pairwise Pseudonymous Identifier (PPID)", "Initiator", "CDR Sharing Arrangement" and "CDR Sharing Agreement Identifier"  as defined by [@!DATARIGHTPLUS-ROSETTA].
 
+Action Identifier
+: A unique and discrete identifier for a given action, typically lodged at a resource server endpoint.
+
+
 # High Level Process
 
 This document, as extended further in OpenAPI format within [@!DATARIGHTPLUS-REDOCLY-ID2], describes the endpoints to deliver the Sharing Arrangement V2 capability. The current approach to data sharing within the Consumer Data Right is brittle and does not provide sufficient feedback as to the status of sharing requests as they are handed over from Initiator to the Provider. The existing sharing establishment process also assumes a live establishment rather than a potentially asynchronous, back-channel or machine to machine (IoT) authorisation approach.
@@ -146,6 +150,7 @@ In order to maximise backward compatibility and facilitate orderly transition fo
 ## Resource Server
 
 The Provider Resource Server:
+
 1. **SHALL** support the `requestDataSharingAgreement` and `getDataSharingAgreement` endpoints as described in [@!DATARIGHTPLUS-REDOCLY-ID2];
 2. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1-01] and advertise the `requestDataSharingAgreement` and `getDataSharingAgreement` endpoints
 3. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Agreement requests
