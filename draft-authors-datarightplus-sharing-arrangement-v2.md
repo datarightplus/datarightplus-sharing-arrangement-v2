@@ -190,3 +190,4 @@ The Action Identifier **SHALL NOT** be guessable, derivable nor identify the Con
 <reference anchor="DATARIGHTPLUS-DISCOVERY-V1-01" target="https://datarightplus.github.io/datarightplus-discovery-v1/draft-authors-datarightplus-discovery-v1-01/draft-authors-datarightplus-discovery-v1.html"> <front><title>DataRight+: Provider Discovery V1</title><author initials="S." surname="Low" fullname="Stuart Low"><organization>Biza.io</organization></author></front> </reference>
 
 <reference anchor="FAPI-GRANT-MANAGEMENT" target="https://openid.net/specs/fapi-grant-management.html"> <front> <title>The OAuth 2.0 Authorization Framework</title><author fullname="D. Hardt"> <organization>Microsoft</organization> </author><date month="Oct" year="2012"/></front> </reference>
+
