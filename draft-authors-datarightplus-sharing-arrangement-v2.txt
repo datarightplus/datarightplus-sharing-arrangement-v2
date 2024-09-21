@@ -5,7 +5,7 @@
 datarightplus                                                     S. Low
 Internet-Draft                                                 B. Kolera
 Intended status: Experimental                                    Biza.io
-Expires: 6 March 2025                                   2 September 2024
+Expires: 25 March 2025                                 21 September 2024
 
 
                    DataRight+: Sharing Arrangement V2
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 March 2025.
+   This Internet-Draft will expire on 25 March 2025.
 
 Copyright Notice
 
@@ -71,9 +71,14 @@ Table of Contents
      4.2.  Resource Server
    5.  Initiator
      5.1.  Authorisation Client
-   6.  Implementation Considerations
-   7.  Security Considerations
-   8.  Normative References
+   6.  Non-Normative Examples
+     6.1.  Request Data Sharing Request
+     6.2.  Get Sharing Request
+     6.3.  Get Sharing Arrangement
+     6.4.  Get Current Sharing Arrangement
+   7.  Implementation Considerations
+   8.  Security Considerations
+   9.  Normative References
    Authors' Addresses
 
 1.  Scope
@@ -95,12 +100,17 @@ Table of Contents
    [DATARIGHTPLUS-ROSETTA].
 
    Action Identifier  A unique and discrete identifier for a given
-      action, typically lodged at a resource server endpoint.
+      action, typically lodged at a resource server endpoint.  This
+      identifier is intended to bind an identifier returned from a
+      resource server endpoint with the applicable authorisation.
+      Authorisation initiation may be conducted multiple times for a
+      single action identifier where the relevant action state permits
+      it.
 
 3.  High Level Process
 
    This document, as extended further in OpenAPI format within
-   [DATARIGHTPLUS-REDOCLY-ID2], describes the endpoints to deliver the
+   [DATARIGHTPLUS-REDOCLY], describes the endpoints to deliver the
    Sharing Arrangement V2 capability.  The current approach to data
    sharing within the Consumer Data Right is brittle and does not
    provide sufficient feedback as to the status of sharing requests as
@@ -148,10 +158,10 @@ Table of Contents
 
    The request object submitted to the authorisation server:
 
-   1.  SHALL support an optional string parameter urn:dio:action_id
-       referencing a valid [Action Identifier];
-   2.  SHALL reject requests containing a urn:dio:action_id parameter
-       that is unknown, expired or not associated with the requesting
+   1.  SHALL require an ID Token claim urn:dio:action_id referencing a
+       valid _Action Identifier_;
+   2.  SHALL reject requests containing a urn:dio:action_id claim that
+       is unknown, expired or not associated with the requesting
        Initiator;
 
 4.1.1.1.  Example
@@ -170,8 +180,8 @@ Table of Contents
      "redirect_uri": "https://www.recipient.com.au/coolstuff",
      "scope": "openid",
      "claims": {
-       "urn:dio:action_id": "496a3ba7-04b4-4362-b775-9e0433e48eea",
        "id_token": {
+          "urn:dio:action_id": "496a3ba7-04b4-4362-b775-9e0433e48eea",
          "acr": {
            "essential": true,
            "values": ["urn:cds.au:cdr:3"]
@@ -193,8 +203,8 @@ Table of Contents
    1.  SHALL include within the Introspection Endpoint response:
        1.  the exp claim, with a value equal to the expiry time of the
            underlying Sharing Agreement and;
-       2.  the urn:dio:action_id claim, containing the assigned [Action
-           Identifier];
+       2.  the urn:dio:action_id claim, containing the assigned _Action
+           Identifier_;
 
 4.1.3.  CDR Arrangement V1 Compatibility
 
@@ -249,18 +259,21 @@ Table of Contents
 
    The Provider Resource Server:
 
-   1.  SHALL support the requestDataSharingAgreement and
-       getDataSharingAgreement endpoints as described in
-       [DATARIGHTPLUS-REDOCLY-ID2];
-   2.  SHALL support [DATARIGHTPLUS-DISCOVERY-V1-01] and advertise the
-       requestDataSharingAgreement and getDataSharingAgreement endpoints
-   3.  SHALL support providing an existing agreementId in order to
+   1.  SHALL support the requestDataSharing and getSharingRequest
+       endpoints as described in [DATARIGHTPLUS-REDOCLY];
+   2.  SHALL support the getSharingAgreement endpoint as described in
+       [DATARIGHTPLUS-REDOCLY];
+   3.  MAY support the getCurrentSharingAgreement endpoint as described
+       in [DATARIGHTPLUS-REDOCLY];
+   4.  SHALL support [DATARIGHTPLUS-DISCOVERY-V1] and advertise the
+       supported endpoints;
+   5.  SHALL support providing an existing agreementId in order to
        extend an existing agreement in subsequent Request Sharing
-       Agreement requests
-   4.  MAY support Consumer Type (consumerType) authorisation filtering
+       Arrangement requests
+   6.  MAY support Consumer Type (consumerType) authorisation filtering
        and, if supported, include the SUPPORTS_CONSUMER_TYPE flag at the
        requestDataSharingAgreement endpoint
-   5.  MAY support record filtering by date (oldestDate/newestDate) and,
+   7.  MAY support record filtering by date (oldestDate/newestDate) and,
        if supported, include the SUPPORTS_DATE_FILTER flag at the
        requestDataSharingAgreement endpoint
 
@@ -274,16 +287,157 @@ Table of Contents
    [DATARIGHTPLUS-INFOSEC-BASELINE] the Initiator authorisation client:
 
    1.  SHALL support the Initiator provisions of
-       [DATARIGHTPLUS-DISCOVERY-V1-01] to discover the
-       getDataSharingAgreement and requestDataSharingAgreement
-       endpoints;
+       [DATARIGHTPLUS-DISCOVERY-V1] to discover the endpoints of the
+       Provider Resource Server;
    2.  SHALL perform a Dynamic Client Registration update, as described
        in [DATARIGHTPLUS-ADMISSION-CONTROL-00], to be granted access to
        the dio:sharing scope;
    3.  SHALL only include optional Request Sharing Agreement parameters
-       if they are advertised within the Provider discovery document
+       if they are advertised as supported within the Provider discovery
+       document
 
-6.  Implementation Considerations
+6.  Non-Normative Examples
+
+6.1.  Request Data Sharing Request
+
+   Initialise a sharing request for Basic Bank Accounts Read for 365
+   Days:
+
+   POST /dio-au/actions/request-data-sharing
+   Host: api.provider.com.au
+   Content-Type: application/json
+   Bearer: <client credentials token containing dio:sharing>
+   Accept: application/json
+   x-v: V2
+
+   {
+     "version": "V2",
+     "data": {
+       "sharingDuration": 31536000,
+       "dataClusters": [
+         "BANK_ACCOUNTS_BASIC_READ"
+       ]
+     }
+   }
+
+   Response indicating an assigned Action Identifier pending
+   authorisation establishment.  It would be expected the actionId is
+   then used to create a PAR request containing the required identifier.
+
+   {
+      "version": "V2",
+      "data": {
+         "sharingDuration": 31536000,
+         "dataClusters": [
+            "BANK_ACCOUNTS_BASIC_READ"
+         ]
+      },
+      "links": {
+         "self": "https://api.provider.com.au/dio-au/actions/request-data-sharing/8ba3f97e-c22c-4516-b6ed-05c0486db195"
+      },
+      "meta": {
+         "actionId": "8ba3f97e-c22c-4516-b6ed-05c0486db195",
+         "actionStatus": "PENDING",
+         "actionStatusDescription": "Sharing Arrangement Request Pending",
+         "authStatus": "PENDING",
+         "authStatusDescription": "Pending Authorisation Initiation"
+      }
+   }
+
+6.2.  Get Sharing Request
+
+   This retrieves the details of a current sharing request.
+
+GET /dio-au/actions/request-data-sharing/8ba3f97e-c22c-4516-b6ed-05c0486db195
+Host: api.provider.com.au
+Accept: application/json
+Bearer: <client credentials token containing dio:sharing>
+x-v: V2
+
+   Response indicating a completed authorisation and established
+   agreement.
+
+   {
+      "version": "V2",
+      "data": {
+         "sharingDuration": 31536000,
+         "dataClusters": [
+            "BANK_ACCOUNTS_BASIC_READ"
+         ]
+      },
+      "links": {
+         "self": "https://api.provider.com.au/dio-au/actions/request-data-sharing/8ba3f97e-c22c-4516-b6ed-05c0486db195"
+      },
+      "meta": {
+         "actionId": "8ba3f97e-c22c-4516-b6ed-05c0486db195",
+         "agreementId": "e1529071-601f-46ff-a097-97cdaba84065",
+         "actionStatus": "SUCCESS",
+         "actionStatusDescription": "Sharing Arrangement Established",
+         "authStatus": "COMPLETE",
+         "authStatusDescription": "Authorisation for sharing has been completed"
+      }
+   }
+
+6.3.  Get Sharing Arrangement
+
+   This retrieves an arrangements details after establishment.
+
+   GET /dio-au/actions/data-sharing/e1529071-601f-46ff-a097-97cdaba84065
+   Host: api.provider.com.au
+   Accept: application/json
+   Bearer: <client credentials token containing dio:sharing>
+   x-v: V2
+
+   Response indicates an arrangement in Active state with an expiration
+   time and set of data clusters.
+
+   {
+      "version": "V2",
+      "data": {
+         "agreementId": "e1529071-601f-46ff-a097-97cdaba84065",
+         "status": "ACTIVE",
+         "creationDateTime": "2023-09-21T14:44:16+10:00",
+         "expiryDateTime": "2024-08-21T14:44:16+10:00",
+         "dataClusters": [
+            "BANK_ACCOUNTS_BASIC_READ"
+         ]
+      },
+      "links": {
+         "self": "https://api.provider.com.au/dio-au/actions/data-sharing/e1529071-601f-46ff-a097-97cdaba84065"
+      }
+   }
+
+6.4.  Get Current Sharing Arrangement
+
+   This retrieves the arrangement details for the specified Bearer
+   token.
+
+   GET /dio-au/actions/data-sharing/self
+   Host: api.provider.com.au
+   Accept: application/json
+   Bearer: <token obtained from completed sharing request authorisation>
+   x-v: V2
+
+   Response indicates an arrangement in Active state with an expiration
+   time and set of data clusters.
+
+   {
+      "version": "V2",
+      "data": {
+         "agreementId": "e1529071-601f-46ff-a097-97cdaba84065",
+         "status": "ACTIVE",
+         "creationDateTime": "2023-09-21T14:44:16+10:00",
+         "expiryDateTime": "2024-08-21T14:44:16+10:00",
+         "dataClusters": [
+            "BANK_ACCOUNTS_BASIC_READ"
+         ]
+      },
+      "links": {
+         "self": "https://api.provider.com.au/dio-au/actions/data-sharing/self"
+      }
+   }
+
+7.  Implementation Considerations
 
    This specification does not explicitly state how long an assigned
    Action Identifier persists for however it is expected that an
@@ -291,12 +445,12 @@ Table of Contents
    associated authorisation is still active and for a significant period
    (more than a year) after it becomes inactive.
 
-7.  Security Considerations
+8.  Security Considerations
 
    The Action Identifier SHALL NOT be guessable, derivable nor identify
    the Consumer.
 
-8.  Normative References
+9.  Normative References
 
    [CDS]      Data Standards Body (Treasury), "Consumer Data Standards
               (CDS)", <https://consumerdatastandardsaustralia.github.io/
@@ -309,11 +463,10 @@ Table of Contents
               admission-control-00/draft-authors-datarightplus-
               admission-control.html>.
 
-   [DATARIGHTPLUS-DISCOVERY-V1-01]
+   [DATARIGHTPLUS-DISCOVERY-V1]
               Low, S., "DataRight+: Provider Discovery V1",
-              <https://datarightplus.github.io/datarightplus-discovery-
-              v1/draft-authors-datarightplus-discovery-v1-01/draft-
-              authors-datarightplus-discovery-v1.html>.
+              <https://datarightplus.github.io/datarightplus-discovery/
+              draft-authors-datarightplus-discovery.html>.
 
    [DATARIGHTPLUS-INFOSEC-BASELINE]
               Low, S., "DataRight+ Security Profile: Baseline",
@@ -321,10 +474,10 @@ Table of Contents
               baseline/draft-authors-datarightplus-infosec-
               baseline.html>.
 
-   [DATARIGHTPLUS-REDOCLY-ID2]
+   [DATARIGHTPLUS-REDOCLY]
               Low, S., Kolera, B., and W. Cai, "DataRight+: Redocly
-              (ID2)", <https://datarightplus.github.io/datarightplus-
-              redocly/?v=ID2>.
+              (latest)",
+              <https://datarightplus.github.io/datarightplus-redocly>.
 
    [DATARIGHTPLUS-ROSETTA]
               Low, S., "DataRight+ Rosetta Stone",
