@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-24T00:16:00.575867+00:00",
+  "timestamp": "2024-10-27T00:17:30.573396+00:00",
   "repo": "datarightplus/datarightplus-sharing-arrangement-v2",
   "labels": [
     {
@@ -49,6 +49,39 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOL1hy-M6bvnj9",
+      "title": "Need to specify a reasonable timeframe for Sharing Request expiry",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/issues/1",
+      "state": "OPEN",
+      "author": "wcai-biza",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "> [4.1.1. ](https://datarightplus.github.io/datarightplus-sharing-arrangement-v2/draft-authors-datarightplus-sharing-arrangement-v2.html#section-4.1.1)[Request Object](https://datarightplus.github.io/datarightplus-sharing-arrangement-v2/draft-authors-datarightplus-sharing-arrangement-v2.html#name-request-object)\r\nThe request object submitted to the authorisation server:\r\nSHALL require an ID Token claim urn:dio:action_id referencing a valid Action Identifier;\r\nSHALL reject requests containing a urn:dio:action_id claim that is unknown, expired or not associated with the requesting Initiator;\r\n\r\n4.1.1 states that authorisation server SHALL reject expired data sharing requests, but spec does not advise a reasonable timeframe for data sharing request expiry",
+      "createdAt": "2024-10-25T03:03:50Z",
+      "updatedAt": "2024-10-25T03:03:50Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 2,
+      "id": "I_kwDOL1hy-M6bvqC_",
+      "title": "Need a new actionStatus enum value between \"PENDING\" and \"IN_PROGRESS\"",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/issues/2",
+      "state": "OPEN",
+      "author": "wcai-biza",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "An data sharing request cannot be reused after it has been submitted to PAR, therefore we need to move its status out of \"PENDING\". And it is technically not \"IN_PROGRESS\" either, because the `/authorize` flow has not started yet.\r\n\r\nWe need to introduce a new actionStatus enum value.",
+      "createdAt": "2024-10-25T03:15:34Z",
+      "updatedAt": "2024-10-25T03:15:34Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": []
 }
