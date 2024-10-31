@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-29T00:16:30.555747+00:00",
+  "timestamp": "2024-10-31T00:16:26.725314+00:00",
   "repo": "datarightplus/datarightplus-sharing-arrangement-v2",
   "labels": [
     {
@@ -79,6 +79,22 @@
       "body": "An data sharing request cannot be reused after it has been submitted to PAR, therefore we need to move its status out of \"PENDING\". And it is technically not \"IN_PROGRESS\" either, because the `/authorize` flow has not started yet.\r\n\r\nWe need to introduce a new actionStatus enum value.",
       "createdAt": "2024-10-25T03:15:34Z",
       "updatedAt": "2024-10-25T03:15:34Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 3,
+      "id": "I_kwDOL1hy-M6cUwgO",
+      "title": "Spec needs to suggest implementation to separate V1 and V2 sharing arrangement",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/issues/3",
+      "state": "OPEN",
+      "author": "wcai-biza",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "At this stage, we should suggest implementation to separate V1 and V2 sharing arrangement, e.g. a V1 arrangement, which was created without data sharing request, should not be amended by a V2 data sharing request.",
+      "createdAt": "2024-10-30T02:15:38Z",
+      "updatedAt": "2024-10-30T02:15:38Z",
       "closedAt": null,
       "comments": []
     }
