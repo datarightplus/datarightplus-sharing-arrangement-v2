@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-11-05T00:15:49.519394+00:00",
+  "timestamp": "2024-11-07T00:15:54.156878+00:00",
   "repo": "datarightplus/datarightplus-sharing-arrangement-v2",
   "labels": [
     {
@@ -95,6 +95,22 @@
       "body": "At this stage, we should suggest implementation to separate V1 and V2 sharing arrangement, e.g. a V1 arrangement, which was created without data sharing request, should not be amended by a V2 data sharing request.",
       "createdAt": "2024-10-30T02:15:38Z",
       "updatedAt": "2024-10-30T02:15:38Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 4,
+      "id": "I_kwDOL1hy-M6dKK9Q",
+      "title": "urn:dio:action_id claim in the non-normative example of a decoded request object should be a JSON object",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/issues/4",
+      "state": "OPEN",
+      "author": "wcai-biza",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, the non-normative example of a decoded request object in the spec has a string type `urn:dio:action_id` claim in `id_token` section:\r\n```\r\n{\r\n  ...\r\n  \"claims\": {\r\n    \"id_token\": {\r\n      \"urn:dio:action_id\": \"496a3ba7-04b4-4362-b775-9e0433e48eea\",\r\n      \"acr\": {\r\n        \"essential\": true,\r\n        \"values\": [\"urn:cds.au:cdr:3\"]\r\n      }\r\n    },\r\n    ...\r\n  },\r\n  ...\r\n}\r\n```\r\n\r\nHowever, according to https://openid.net/specs/openid-connect-core-1_0.html#IndividualClaimsRequests, `id_token` members must be either `null` or a JSON object.\r\n",
+      "createdAt": "2024-11-05T23:14:30Z",
+      "updatedAt": "2024-11-05T23:14:30Z",
       "closedAt": null,
       "comments": []
     }
