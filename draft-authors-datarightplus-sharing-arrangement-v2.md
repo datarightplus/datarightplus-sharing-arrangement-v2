@@ -160,7 +160,6 @@ The Provider Resource Server:
 
 1. **SHALL** support the `requestDataSharing` and `getSharingRequest` endpoints as described in [@!DATARIGHTPLUS-REDOCLY];
 2. **SHALL** support the `getSharingAgreement` endpoint as described in [@!DATARIGHTPLUS-REDOCLY];
-2. **MAY** support the `getCurrentSharingAgreement` endpoint as described in [@!DATARIGHTPLUS-REDOCLY];
 2. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1] and advertise the supported endpoints;
 3. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Arrangement requests
 4. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
