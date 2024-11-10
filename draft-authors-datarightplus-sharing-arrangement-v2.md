@@ -61,12 +61,15 @@ This document, as extended further in OpenAPI format within [@!DATARIGHTPLUS-RED
 At a high level the process expected to be followed through the implementation of this specification is:
 
 1. Initiator utilises a client credentials grant to obtain a token from the Provider;
-2. Initiator calls the Request Sharing Agreement endpoint and obtains an `actionId` in the initial status of `PENDING`;
-3. Initiator submits a pushed authorisation request with a Request Object containing the `urn:dio:action_id` parameter with a value equal to the `actionId` returned in (2)
-4. Initiator redirects the Consumer user-agent to complete the authorisation process
+2. Initiator calls the Request Sharing Agreement endpoint and obtains an `actionId` with an `actionStatus` of `PENDING`;
+3. Initiator submits a pushed authorisation request with a Request Object containing the `urn:dio:action_id` parameter with a value equal to the `actionId` returned in (2). The Provider updates the associated `actionStatus` to `CLAIMED`;
+4. Initiator redirects the Consumer user-agent to complete the authorisation process. Once the Provider authorisation server has initiated the authorisation process for the user-agent the `actionStatus` is updated to `IN_PROGRESS` and the `authStatus` to `PRE_IDENTIFICATION`
+5. As the user-agent progresses through the authorisation process the `authStatus` is updated in line with the stage of the authorisation the user-agent is currently on.
 5. On completion of the authorisation process:
    1. the Provider, if not already assigned, assigns an `agreementId` to the associated `actionId`
-   2. the Initiator performs `authorization_code` token exchange to access the Provider Resource Server resources
+   2. the Provider updates the `actionStatus` to either `SUCCESS` or `FAILED` and;
+   3. performs client redirection back to the Initiator
+4. The Initiator performs `authorization_code` token exchange to access the Provider Resource Server resources
 
 _Note:_ At any time before, during or after the authorisation process the Initiator can use the Get Sharing Agreement endpoint provided by the Resource Server utilising the obtained `actionId`.
 
@@ -80,6 +83,8 @@ In addition to the provisions outlined in [@!DATARIGHTPLUS-INFOSEC-BASELINE] the
 
 1. **SHALL** support the `dio:sharing` authorisation scope;
 2. **SHALL** include the `dio:sharing` authorisation scope within Dynamic Client Registration responses;
+3. **SHALL** update the data contained within the `getSharingagreement` response;
+4. **SHOULD** update the `authStatus` with the last known stage the user-agent within the consent process;
 
 ### Request Object
 
@@ -87,6 +92,7 @@ The request object submitted to the authorisation server:
 
 1. **SHALL** require an ID Token claim `urn:dio:action_id` referencing a valid _Action Identifier_;
 2. **SHALL** reject requests containing a `urn:dio:action_id` claim that is unknown, expired or not associated with the requesting Initiator;
+3. **SHALL** reject requests where the action referenced by `urn:dio:action_id` is in any other state other than `PENDING`
 
 #### Example
 
