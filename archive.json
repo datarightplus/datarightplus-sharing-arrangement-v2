@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-11-10T00:19:46.805466+00:00",
+  "timestamp": "2024-11-12T00:15:38.339461+00:00",
   "repo": "datarightplus/datarightplus-sharing-arrangement-v2",
   "labels": [
     {
@@ -115,5 +115,212 @@
       "comments": []
     }
   ],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 5,
+      "id": "PR_kwDOL1hy-M6BbFEu",
+      "title": "Add implementation note for separating metadata, closes #3",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/pull/5",
+      "state": "OPEN",
+      "author": "perlboy",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "perlboy"
+      ],
+      "labels": [
+        "documentation"
+      ],
+      "body": "Add implementation note to separate metadata between arrangement types.\r\n\r\nCloses #3 .",
+      "createdAt": "2024-11-10T08:58:30Z",
+      "updatedAt": "2024-11-11T00:04:43Z",
+      "baseRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "baseRefName": "main",
+      "baseRefOid": "898f24f5b484d4c8e90ddb62b6864e69dcaccca3",
+      "headRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "headRefName": "v1-v2-implementation-guidance",
+      "headRefOid": "ddb1aeb6fdb3e5752dbf142f79eb8428e4085d32",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOL1hy-M6QmEMj",
+          "commit": {
+            "abbreviatedOid": "ddb1aeb"
+          },
+          "author": "wcai-biza",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-11T00:04:43Z",
+          "updatedAt": "2024-11-11T00:04:43Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDOL1hy-M6BbIhF",
+      "title": "Add claimed status and further clarifications",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/pull/6",
+      "state": "OPEN",
+      "author": "perlboy",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "perlboy"
+      ],
+      "labels": [
+        "bug"
+      ],
+      "body": "Introduces `CLAIMED` `actionStatus` value and clarifies progressive updates for both `actionStatus` and `authStatus`.\r\n\r\nCloses #2 once https://github.com/datarightplus/datarightplus-redocly/pull/19 is merged.",
+      "createdAt": "2024-11-10T09:36:29Z",
+      "updatedAt": "2024-11-11T00:13:00Z",
+      "baseRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "baseRefName": "main",
+      "baseRefOid": "898f24f5b484d4c8e90ddb62b6864e69dcaccca3",
+      "headRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "headRefName": "add-claimed-status",
+      "headRefOid": "fd598f1d994832339e6e0aca61bde0070a91c12e",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOL1hy-M6QmHER",
+          "commit": {
+            "abbreviatedOid": "fd598f1"
+          },
+          "author": "wcai-biza",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-11T00:13:00Z",
+          "updatedAt": "2024-11-11T00:13:00Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDOL1hy-M6BbJXO",
+      "title": "Add expired provision",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/pull/7",
+      "state": "OPEN",
+      "author": "perlboy",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "perlboy"
+      ],
+      "labels": [
+        "documentation"
+      ],
+      "body": "Add a `SHOULD` for expiry. Closes https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/issues/1",
+      "createdAt": "2024-11-10T09:47:21Z",
+      "updatedAt": "2024-11-11T00:13:20Z",
+      "baseRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "baseRefName": "main",
+      "baseRefOid": "898f24f5b484d4c8e90ddb62b6864e69dcaccca3",
+      "headRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "headRefName": "add-expired-provision",
+      "headRefOid": "dcebb642555330a5e7cdc92e018c810a352940f8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOL1hy-M6QmHF3",
+          "commit": {
+            "abbreviatedOid": "dcebb64"
+          },
+          "author": "wcai-biza",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-11T00:13:20Z",
+          "updatedAt": "2024-11-11T00:13:20Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOL1hy-M6BbKFY",
+      "title": "Fix claim, make it essential and collapse request object",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/pull/8",
+      "state": "OPEN",
+      "author": "perlboy",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "perlboy"
+      ],
+      "labels": [
+        "bug"
+      ],
+      "body": "This fixes the action_id claim example, ensures it is declared as an essential and collapses the request object definition into authorisation server provisions.\r\n\r\nCloses #4 \r\nDepends on https://github.com/datarightplus/datarightplus-redocly/pull/19",
+      "createdAt": "2024-11-10T09:57:10Z",
+      "updatedAt": "2024-11-11T00:13:59Z",
+      "baseRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "baseRefName": "main",
+      "baseRefOid": "898f24f5b484d4c8e90ddb62b6864e69dcaccca3",
+      "headRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "headRefName": "fix-claim-example",
+      "headRefOid": "1adc10f0f2d7ff1bd82a9c1374cc963d823ca8cd",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOL1hy-M6QmHJe",
+          "commit": {
+            "abbreviatedOid": "1adc10f"
+          },
+          "author": "wcai-biza",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2024-11-11T00:13:59Z",
+          "updatedAt": "2024-11-11T00:13:59Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOL1hy-M6BbKy0",
+      "title": "Remove get current agreement",
+      "url": "https://github.com/datarightplus/datarightplus-sharing-arrangement-v2/pull/9",
+      "state": "OPEN",
+      "author": "perlboy",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [
+        "perlboy"
+      ],
+      "labels": [
+        "invalid"
+      ],
+      "body": "Remove get current agreement, we are focused on get agreement info based on client credentials and the path based mechanism.",
+      "createdAt": "2024-11-10T10:05:22Z",
+      "updatedAt": "2024-11-10T10:05:22Z",
+      "baseRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "baseRefName": "main",
+      "baseRefOid": "898f24f5b484d4c8e90ddb62b6864e69dcaccca3",
+      "headRepository": "datarightplus/datarightplus-sharing-arrangement-v2",
+      "headRefName": "remove-get-current-agreement",
+      "headRefOid": "ecdf877ac1021e198f9d258ea90f6d2641469d5d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
