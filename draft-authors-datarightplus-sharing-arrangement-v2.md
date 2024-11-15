@@ -330,6 +330,8 @@ Response indicates an arrangement in Active state with an expiration time and se
 
 This specification does not explicitly state how long an assigned Action Identifier persists for however it is expected that an Initiator shall be able to reference an Action Identifier while the associated authorisation is still active and for a significant period (more than a year) after it becomes inactive.
 
+Despite the metadata being essentially overlapping, it is RECOMMENDED to store Sharing Arrangement V2 metadata distinctly from that stored for Sharing Arrangement V1, and by proxy the current form of a CDR Arrangement. This ensures that the sharing arrangement types can be bifurcated in future if required.
+
 # Security Considerations
 
 The Action Identifier **SHALL NOT** be guessable, derivable nor identify the Consumer.
