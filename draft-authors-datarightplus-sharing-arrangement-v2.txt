@@ -273,6 +273,8 @@ Table of Contents
    6.  MAY support record filtering by date (oldestDate/newestDate) and,
        if supported, include the SUPPORTS_DATE_FILTER flag at the
        requestDataSharingAgreement endpoint
+   7.  SHOULD expire actions which are in an actionStatus of PENDING
+       within 60 minutes and update the actionStatus to EXPIRED;
 
 5.  Initiator
 

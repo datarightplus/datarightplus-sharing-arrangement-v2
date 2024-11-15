@@ -1572,6 +1572,9 @@ svg :is([fill="white"], [fill^="#fff"]) {
           <li id="section-4.2-2.6">
             <span class="bcp14">MAY</span> support record filtering by date (<code>oldestDate</code>/<code>newestDate</code>) and, if supported, include the <code>SUPPORTS_DATE_FILTER</code> flag at the <code>requestDataSharingAgreement</code> endpoint<a href="#section-4.2-2.6" class="pilcrow">¶</a>
 </li>
+          <li id="section-4.2-2.7">
+            <span class="bcp14">SHOULD</span> expire actions which are in an <code>actionStatus</code> of <code>PENDING</code> within 60 minutes and update the <code>actionStatus</code> to <code>EXPIRED</code>;<a href="#section-4.2-2.7" class="pilcrow">¶</a>
+</li>
         </ol>
 </section>
 </div>
