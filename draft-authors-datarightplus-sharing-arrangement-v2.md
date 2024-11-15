@@ -162,6 +162,7 @@ The Provider Resource Server:
 3. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Arrangement requests
 4. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
 5. **MAY** support record filtering by date (`oldestDate`/`newestDate`) and, if supported, include the `SUPPORTS_DATE_FILTER` flag at the `requestDataSharingAgreement` endpoint
+6. **SHOULD** expire actions which are in an `actionStatus` of `PENDING` within 60 minutes and update the `actionStatus` to `EXPIRED`;
 
 # Initiator
 
