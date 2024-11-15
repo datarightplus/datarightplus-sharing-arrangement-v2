@@ -5,7 +5,7 @@
 datarightplus                                                     S. Low
 Internet-Draft                                                 B. Kolera
 Intended status: Experimental                                    Biza.io
-Expires: 14 May 2025                                    10 November 2024
+Expires: 19 May 2025                                    15 November 2024
 
 
                    DataRight+: Sharing Arrangement V2
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 May 2025.
+   This Internet-Draft will expire on 19 May 2025.
 
 Copyright Notice
 
@@ -65,7 +65,7 @@ Table of Contents
    3.  High Level Process
    4.  Provider
      4.1.  Authorisation Server
-       4.1.1.  Request Object
+       4.1.1.  Example
        4.1.2.  Claims
        4.1.3.  CDR Arrangement V1 Compatibility
      4.2.  Resource Server
@@ -167,20 +167,13 @@ Table of Contents
        response;
    4.  SHOULD update the authStatus with the last known stage the user-
        agent within the consent process;
-
-4.1.1.  Request Object
-
-   The request object submitted to the authorisation server:
-
-   1.  SHALL require an ID Token claim urn:dio:action_id referencing a
+   5.  SHALL require an ID Token claim urn:dio:action_id referencing a
        valid _Action Identifier_;
-   2.  SHALL reject requests containing a urn:dio:action_id claim that
-       is unknown, expired or not associated with the requesting
-       Initiator;
-   3.  SHALL reject requests where the action referenced by
-       urn:dio:action_id is in any other state other than PENDING
+   6.  SHALL reject requests where the action referenced by
+       urn:dio:action_id is unknown, not associated with the Initiator
+       or in any other state other than PENDING
 
-4.1.1.1.  Example
+4.1.1.  Example
 
    The following is a non-normative example of a decoded request object
    requesting authorisation for a previously lodged actionId
@@ -197,7 +190,10 @@ Table of Contents
      "scope": "openid",
      "claims": {
        "id_token": {
-          "urn:dio:action_id": "496a3ba7-04b4-4362-b775-9e0433e48eea",
+          "urn:dio:action_id": {
+             "essential": true,
+             "values": ["496a3ba7-04b4-4362-b775-9e0433e48eea"]
+          },
          "acr": {
            "essential": true,
            "values": ["urn:cds.au:cdr:3"]
@@ -279,19 +275,19 @@ Table of Contents
        endpoints as described in [DATARIGHTPLUS-REDOCLY];
    2.  SHALL support the getSharingAgreement endpoint as described in
        [DATARIGHTPLUS-REDOCLY];
-   3.  MAY support the getCurrentSharingAgreement endpoint as described
-       in [DATARIGHTPLUS-REDOCLY];
-   4.  SHALL support [DATARIGHTPLUS-DISCOVERY-V1] and advertise the
+   3.  SHALL support [DATARIGHTPLUS-DISCOVERY-V1] and advertise the
        supported endpoints;
-   5.  SHALL support providing an existing agreementId in order to
+   4.  SHALL support providing an existing agreementId in order to
        extend an existing agreement in subsequent Request Sharing
        Arrangement requests
-   6.  MAY support Consumer Type (consumerType) authorisation filtering
+   5.  MAY support Consumer Type (consumerType) authorisation filtering
        and, if supported, include the SUPPORTS_CONSUMER_TYPE flag at the
        requestDataSharingAgreement endpoint
-   7.  MAY support record filtering by date (oldestDate/newestDate) and,
+   6.  MAY support record filtering by date (oldestDate/newestDate) and,
        if supported, include the SUPPORTS_DATE_FILTER flag at the
        requestDataSharingAgreement endpoint
+   7.  SHOULD expire actions which are in an actionStatus of PENDING
+       within 60 minutes and update the actionStatus to EXPIRED;
 
 5.  Initiator
 
@@ -460,6 +456,12 @@ x-v: V2
    Initiator shall be able to reference an Action Identifier while the
    associated authorisation is still active and for a significant period
    (more than a year) after it becomes inactive.
+
+   Despite the metadata being essentially overlapping, it is RECOMMENDED
+   to store Sharing Arrangement V2 metadata distinctly from that stored
+   for Sharing Arrangement V1, and by proxy the current form of a CDR
+   Arrangement.  This ensures that the sharing arrangement types can be
+   bifurcated in future if required.
 
 8.  Security Considerations
 
