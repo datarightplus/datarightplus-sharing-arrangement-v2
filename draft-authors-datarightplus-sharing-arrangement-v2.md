@@ -85,17 +85,11 @@ In addition to the provisions outlined in [@!DATARIGHTPLUS-INFOSEC-BASELINE] the
 2. **SHALL** include the `dio:sharing` authorisation scope within Dynamic Client Registration responses;
 3. **SHALL** update the data contained within the `getSharingagreement` response;
 4. **SHOULD** update the `authStatus` with the last known stage the user-agent within the consent process;
+5. **SHALL** require an ID Token claim `urn:dio:action_id` referencing a valid _Action Identifier_;
+7. **SHALL** reject requests where the action referenced by `urn:dio:action_id` is unknown, not associated with the Initiator or in any other state other than `PENDING`
 
-### Request Object
 
-The request object submitted to the authorisation server:
-
-1. **SHALL** require an ID Token claim `urn:dio:action_id` referencing a valid _Action Identifier_;
-2. **SHALL** reject requests containing a `urn:dio:action_id` claim that is unknown, expired or not associated with the requesting Initiator;
-3. **SHALL** reject requests where the action referenced by `urn:dio:action_id` is in any other state other than `PENDING`
-
-#### Example
-
+### Example
 The following is a non-normative example of a decoded request object requesting authorisation for a previously lodged `actionId`
 
 ```json
@@ -111,7 +105,10 @@ The following is a non-normative example of a decoded request object requesting 
   "scope": "openid",
   "claims": {
     "id_token": {
-       "urn:dio:action_id": "496a3ba7-04b4-4362-b775-9e0433e48eea",
+       "urn:dio:action_id": {
+          "essential": true,
+          "values": ["496a3ba7-04b4-4362-b775-9e0433e48eea"]
+       },
       "acr": {
         "essential": true,
         "values": ["urn:cds.au:cdr:3"]
@@ -166,11 +163,11 @@ The Provider Resource Server:
 
 1. **SHALL** support the `requestDataSharing` and `getSharingRequest` endpoints as described in [@!DATARIGHTPLUS-REDOCLY];
 2. **SHALL** support the `getSharingAgreement` endpoint as described in [@!DATARIGHTPLUS-REDOCLY];
-2. **MAY** support the `getCurrentSharingAgreement` endpoint as described in [@!DATARIGHTPLUS-REDOCLY];
 2. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1] and advertise the supported endpoints;
 3. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Arrangement requests
 4. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
 5. **MAY** support record filtering by date (`oldestDate`/`newestDate`) and, if supported, include the `SUPPORTS_DATE_FILTER` flag at the `requestDataSharingAgreement` endpoint
+6. **SHOULD** expire actions which are in an `actionStatus` of `PENDING` within 60 minutes and update the `actionStatus` to `EXPIRED`;
 
 # Initiator
 
@@ -337,6 +334,8 @@ Response indicates an arrangement in Active state with an expiration time and se
 # Implementation Considerations
 
 This specification does not explicitly state how long an assigned Action Identifier persists for however it is expected that an Initiator shall be able to reference an Action Identifier while the associated authorisation is still active and for a significant period (more than a year) after it becomes inactive.
+
+Despite the metadata being essentially overlapping, it is RECOMMENDED to store Sharing Arrangement V2 metadata distinctly from that stored for Sharing Arrangement V1, and by proxy the current form of a CDR Arrangement. This ensures that the sharing arrangement types can be bifurcated in future if required.
 
 # Security Considerations
 
