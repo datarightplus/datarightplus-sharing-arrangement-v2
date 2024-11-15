@@ -65,7 +65,7 @@ Table of Contents
    3.  High Level Process
    4.  Provider
      4.1.  Authorisation Server
-       4.1.1.  Request Object
+       4.1.1.  Example
        4.1.2.  Claims
        4.1.3.  CDR Arrangement V1 Compatibility
      4.2.  Resource Server
@@ -153,18 +153,14 @@ Table of Contents
    1.  SHALL support the dio:sharing authorisation scope;
    2.  SHALL include the dio:sharing authorisation scope within Dynamic
        Client Registration responses;
-
-4.1.1.  Request Object
-
-   The request object submitted to the authorisation server:
-
-   1.  SHALL require an ID Token claim urn:dio:action_id referencing a
-       valid _Action Identifier_;
-   2.  SHALL reject requests containing a urn:dio:action_id claim that
-       is unknown, expired or not associated with the requesting
+   3.  SHALL support request objects containing an essential ID Token
+       claim named urn:dio:action_id referencing a valid _Action
+       Identifier_;
+   4.  SHALL reject request objects containing a urn:dio:action_id claim
+       that is unknown, expired or not associated with the requesting
        Initiator;
 
-4.1.1.1.  Example
+4.1.1.  Example
 
    The following is a non-normative example of a decoded request object
    requesting authorisation for a previously lodged actionId
@@ -181,7 +177,10 @@ Table of Contents
      "scope": "openid",
      "claims": {
        "id_token": {
-          "urn:dio:action_id": "496a3ba7-04b4-4362-b775-9e0433e48eea",
+          "urn:dio:action_id": {
+             "essential": true,
+             "values": ["496a3ba7-04b4-4362-b775-9e0433e48eea"]
+          },
          "acr": {
            "essential": true,
            "values": ["urn:cds.au:cdr:3"]
