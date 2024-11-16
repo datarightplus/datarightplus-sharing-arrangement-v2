@@ -5,7 +5,7 @@
 datarightplus                                                     S. Low
 Internet-Draft                                                 B. Kolera
 Intended status: Experimental                                    Biza.io
-Expires: 19 May 2025                                    15 November 2024
+Expires: 20 May 2025                                    16 November 2024
 
 
                    DataRight+: Sharing Arrangement V2
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 May 2025.
+   This Internet-Draft will expire on 20 May 2025.
 
 Copyright Notice
 
@@ -75,7 +75,6 @@ Table of Contents
      6.1.  Request Data Sharing Request
      6.2.  Get Sharing Request
      6.3.  Get Sharing Arrangement
-     6.4.  Get Current Sharing Arrangement
    7.  Implementation Considerations
    8.  Security Considerations
    9.  Normative References
@@ -163,7 +162,7 @@ Table of Contents
    1.  SHALL support the dio:sharing authorisation scope;
    2.  SHALL include the dio:sharing authorisation scope within Dynamic
        Client Registration responses;
-   3.  SHALL update the data contained within the getSharingagreement
+   3.  SHALL update the data contained within the getSharingAgreement
        response;
    4.  SHOULD update the authStatus with the last known stage the user-
        agent within the consent process;
@@ -416,36 +415,6 @@ x-v: V2
       },
       "links": {
          "self": "https://api.provider.com.au/dio-au/actions/data-sharing/e1529071-601f-46ff-a097-97cdaba84065"
-      }
-   }
-
-6.4.  Get Current Sharing Arrangement
-
-   This retrieves the arrangement details for the specified Bearer
-   token.
-
-   GET /dio-au/actions/data-sharing/self
-   Host: api.provider.com.au
-   Accept: application/json
-   Bearer: <token obtained from completed sharing request authorisation>
-   x-v: V2
-
-   Response indicates an arrangement in Active state with an expiration
-   time and set of data clusters.
-
-   {
-      "version": "V2",
-      "data": {
-         "agreementId": "e1529071-601f-46ff-a097-97cdaba84065",
-         "status": "ACTIVE",
-         "creationDateTime": "2023-09-21T14:44:16+10:00",
-         "expiryDateTime": "2024-08-21T14:44:16+10:00",
-         "dataClusters": [
-            "BANK_ACCOUNTS_BASIC_READ"
-         ]
-      },
-      "links": {
-         "self": "https://api.provider.com.au/dio-au/actions/data-sharing/self"
       }
    }
 
