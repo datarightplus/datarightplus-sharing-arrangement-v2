@@ -61,12 +61,15 @@ This document, as extended further in OpenAPI format within [@!DATARIGHTPLUS-RED
 At a high level the process expected to be followed through the implementation of this specification is:
 
 1. Initiator utilises a client credentials grant to obtain a token from the Provider;
-2. Initiator calls the Request Sharing Agreement endpoint and obtains an `actionId` in the initial status of `PENDING`;
-3. Initiator submits a pushed authorisation request with a Request Object containing the `urn:dio:action_id` parameter with a value equal to the `actionId` returned in (2)
-4. Initiator redirects the Consumer user-agent to complete the authorisation process
+2. Initiator calls the Request Sharing Agreement endpoint and obtains an `actionId` with an `actionStatus` of `PENDING`;
+3. Initiator submits a pushed authorisation request with a Request Object containing the `urn:dio:action_id` parameter with a value equal to the `actionId` returned in (2). The Provider updates the associated `actionStatus` to `CLAIMED`;
+4. Initiator redirects the Consumer user-agent to complete the authorisation process. Once the Provider authorisation server has initiated the authorisation process for the user-agent the `actionStatus` is updated to `IN_PROGRESS` and the `authStatus` to `PRE_IDENTIFICATION`
+5. As the user-agent progresses through the authorisation process the `authStatus` is updated in line with the stage of the authorisation the user-agent is currently on.
 5. On completion of the authorisation process:
    1. the Provider, if not already assigned, assigns an `agreementId` to the associated `actionId`
-   2. the Initiator performs `authorization_code` token exchange to access the Provider Resource Server resources
+   2. the Provider updates the `actionStatus` to either `SUCCESS` or `FAILED` and;
+   3. performs client redirection back to the Initiator
+4. The Initiator performs `authorization_code` token exchange to access the Provider Resource Server resources
 
 _Note:_ At any time before, during or after the authorisation process the Initiator can use the Get Sharing Agreement endpoint provided by the Resource Server utilising the obtained `actionId`.
 
@@ -80,11 +83,13 @@ In addition to the provisions outlined in [@!DATARIGHTPLUS-INFOSEC-BASELINE] the
 
 1. **SHALL** support the `dio:sharing` authorisation scope;
 2. **SHALL** include the `dio:sharing` authorisation scope within Dynamic Client Registration responses;
-3. **SHALL** support request objects containing an essential ID Token claim named `urn:dio:action_id` referencing a valid _Action Identifier_;
-2. **SHALL** reject request objects containing a `urn:dio:action_id` claim that is unknown, expired or not associated with the requesting Initiator;
+3. **SHALL** update the data contained within the `getSharingAgreement` response;
+4. **SHOULD** update the `authStatus` with the last known stage the user-agent within the consent process;
+5. **SHALL** require an ID Token claim `urn:dio:action_id` referencing a valid _Action Identifier_;
+6. **SHALL** reject requests where the action referenced by `urn:dio:action_id` is unknown, not associated with the Initiator or in any other state other than `PENDING`
+
 
 ### Example
-
 The following is a non-normative example of a decoded request object requesting authorisation for a previously lodged `actionId`
 
 ```json
@@ -158,11 +163,11 @@ The Provider Resource Server:
 
 1. **SHALL** support the `requestDataSharing` and `getSharingRequest` endpoints as described in [@!DATARIGHTPLUS-REDOCLY];
 2. **SHALL** support the `getSharingAgreement` endpoint as described in [@!DATARIGHTPLUS-REDOCLY];
-2. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1] and advertise the supported endpoints;
-3. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Arrangement requests
-4. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
-5. **MAY** support record filtering by date (`oldestDate`/`newestDate`) and, if supported, include the `SUPPORTS_DATE_FILTER` flag at the `requestDataSharingAgreement` endpoint
-6. **SHOULD** expire actions which are in an `actionStatus` of `PENDING` within 60 minutes and update the `actionStatus` to `EXPIRED`;
+3. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1] and advertise the supported endpoints;
+4. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Arrangement requests
+5. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
+6. **MAY** support record filtering by date (`oldestDate`/`newestDate`) and, if supported, include the `SUPPORTS_DATE_FILTER` flag at the `requestDataSharingAgreement` endpoint
+7. **SHOULD** expire actions which are in an `actionStatus` of `PENDING` within 60 minutes and update the `actionStatus` to `EXPIRED`;
 
 # Initiator
 
@@ -292,39 +297,6 @@ Response indicates an arrangement in Active state with an expiration time and se
    }
 }
 ```
-
-## Get Current Sharing Arrangement
-
-This retrieves the arrangement details for the specified Bearer token.
-
-```
-GET /dio-au/actions/data-sharing/self
-Host: api.provider.com.au
-Accept: application/json
-Bearer: <token obtained from completed sharing request authorisation>
-x-v: V2
-```
-
-Response indicates an arrangement in Active state with an expiration time and set of data clusters.
-
-```json
-{
-   "version": "V2",
-   "data": {
-      "agreementId": "e1529071-601f-46ff-a097-97cdaba84065",
-      "status": "ACTIVE",
-      "creationDateTime": "2023-09-21T14:44:16+10:00",
-      "expiryDateTime": "2024-08-21T14:44:16+10:00",
-      "dataClusters": [
-         "BANK_ACCOUNTS_BASIC_READ"
-      ]
-   },
-   "links": {
-      "self": "https://api.provider.com.au/dio-au/actions/data-sharing/self"
-   }
-}
-```
-
 
 # Implementation Considerations
 
