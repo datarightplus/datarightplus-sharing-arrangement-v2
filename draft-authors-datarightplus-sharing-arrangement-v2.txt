@@ -4,8 +4,9 @@
 
 datarightplus                                                     S. Low
 Internet-Draft                                                 B. Kolera
-Intended status: Experimental                                    Biza.io
-Expires: 20 May 2025                                    16 November 2024
+Intended status: Experimental                                     W. Cai
+Expires: 20 May 2025                                             Biza.io
+                                                        16 November 2024
 
 
                    DataRight+: Sharing Arrangement V2
@@ -498,3 +499,8 @@ Authors' Addresses
    Ben Kolera
    Biza.io
    Email: bkolera@biza.io
+
+
+   Wei Cai
+   Biza.io
+   Email: wcai@biza.io
