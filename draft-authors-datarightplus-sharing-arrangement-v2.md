@@ -83,10 +83,10 @@ In addition to the provisions outlined in [@!DATARIGHTPLUS-INFOSEC-BASELINE] the
 
 1. **SHALL** support the `dio:sharing` authorisation scope;
 2. **SHALL** include the `dio:sharing` authorisation scope within Dynamic Client Registration responses;
-3. **SHALL** update the data contained within the `getSharingagreement` response;
+3. **SHALL** update the data contained within the `getSharingAgreement` response;
 4. **SHOULD** update the `authStatus` with the last known stage the user-agent within the consent process;
 5. **SHALL** require an ID Token claim `urn:dio:action_id` referencing a valid _Action Identifier_;
-7. **SHALL** reject requests where the action referenced by `urn:dio:action_id` is unknown, not associated with the Initiator or in any other state other than `PENDING`
+6. **SHALL** reject requests where the action referenced by `urn:dio:action_id` is unknown, not associated with the Initiator or in any other state other than `PENDING`
 
 
 ### Example
@@ -163,11 +163,11 @@ The Provider Resource Server:
 
 1. **SHALL** support the `requestDataSharing` and `getSharingRequest` endpoints as described in [@!DATARIGHTPLUS-REDOCLY];
 2. **SHALL** support the `getSharingAgreement` endpoint as described in [@!DATARIGHTPLUS-REDOCLY];
-2. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1] and advertise the supported endpoints;
-3. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Arrangement requests
-4. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
-5. **MAY** support record filtering by date (`oldestDate`/`newestDate`) and, if supported, include the `SUPPORTS_DATE_FILTER` flag at the `requestDataSharingAgreement` endpoint
-6. **SHOULD** expire actions which are in an `actionStatus` of `PENDING` within 60 minutes and update the `actionStatus` to `EXPIRED`;
+3. **SHALL** support [@!DATARIGHTPLUS-DISCOVERY-V1] and advertise the supported endpoints;
+4. **SHALL** support providing an existing `agreementId` in order to extend an existing agreement in subsequent Request Sharing Arrangement requests
+5. **MAY** support Consumer Type (`consumerType`) authorisation filtering and, if supported, include the `SUPPORTS_CONSUMER_TYPE` flag at the `requestDataSharingAgreement` endpoint
+6. **MAY** support record filtering by date (`oldestDate`/`newestDate`) and, if supported, include the `SUPPORTS_DATE_FILTER` flag at the `requestDataSharingAgreement` endpoint
+7. **SHOULD** expire actions which are in an `actionStatus` of `PENDING` within 60 minutes and update the `actionStatus` to `EXPIRED`;
 
 # Initiator
 
@@ -297,39 +297,6 @@ Response indicates an arrangement in Active state with an expiration time and se
    }
 }
 ```
-
-## Get Current Sharing Arrangement
-
-This retrieves the arrangement details for the specified Bearer token.
-
-```
-GET /dio-au/actions/data-sharing/self
-Host: api.provider.com.au
-Accept: application/json
-Bearer: <token obtained from completed sharing request authorisation>
-x-v: V2
-```
-
-Response indicates an arrangement in Active state with an expiration time and set of data clusters.
-
-```json
-{
-   "version": "V2",
-   "data": {
-      "agreementId": "e1529071-601f-46ff-a097-97cdaba84065",
-      "status": "ACTIVE",
-      "creationDateTime": "2023-09-21T14:44:16+10:00",
-      "expiryDateTime": "2024-08-21T14:44:16+10:00",
-      "dataClusters": [
-         "BANK_ACCOUNTS_BASIC_READ"
-      ]
-   },
-   "links": {
-      "self": "https://api.provider.com.au/dio-au/actions/data-sharing/self"
-   }
-}
-```
-
 
 # Implementation Considerations
 
