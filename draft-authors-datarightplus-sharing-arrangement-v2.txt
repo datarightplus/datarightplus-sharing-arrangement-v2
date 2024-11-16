@@ -5,7 +5,7 @@
 datarightplus                                                     S. Low
 Internet-Draft                                                 B. Kolera
 Intended status: Experimental                                    Biza.io
-Expires: 19 May 2025                                    15 November 2024
+Expires: 20 May 2025                                    16 November 2024
 
 
                    DataRight+: Sharing Arrangement V2
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 May 2025.
+   This Internet-Draft will expire on 20 May 2025.
 
 Copyright Notice
 
@@ -75,7 +75,6 @@ Table of Contents
      6.1.  Request Data Sharing Request
      6.2.  Get Sharing Request
      6.3.  Get Sharing Arrangement
-     6.4.  Get Current Sharing Arrangement
    7.  Implementation Considerations
    8.  Security Considerations
    9.  Normative References
@@ -125,17 +124,27 @@ Table of Contents
    1.  Initiator utilises a client credentials grant to obtain a token
        from the Provider;
    2.  Initiator calls the Request Sharing Agreement endpoint and
-       obtains an actionId in the initial status of PENDING;
+       obtains an actionId with an actionStatus of PENDING;
    3.  Initiator submits a pushed authorisation request with a Request
        Object containing the urn:dio:action_id parameter with a value
-       equal to the actionId returned in (2)
+       equal to the actionId returned in (2).  The Provider updates the
+       associated actionStatus to CLAIMED;
    4.  Initiator redirects the Consumer user-agent to complete the
-       authorisation process
-   5.  On completion of the authorisation process:
+       authorisation process.  Once the Provider authorisation server
+       has initiated the authorisation process for the user-agent the
+       actionStatus is updated to IN_PROGRESS and the authStatus to
+       PRE_IDENTIFICATION
+   5.  As the user-agent progresses through the authorisation process
+       the authStatus is updated in line with the stage of the
+       authorisation the user-agent is currently on.
+   6.  On completion of the authorisation process:
        1.  the Provider, if not already assigned, assigns an agreementId
            to the associated actionId
-       2.  the Initiator performs authorization_code token exchange to
-           access the Provider Resource Server resources
+       2.  the Provider updates the actionStatus to either SUCCESS or
+           FAILED and;
+       3.  performs client redirection back to the Initiator
+   7.  The Initiator performs authorization_code token exchange to
+       access the Provider Resource Server resources
 
    _Note:_ At any time before, during or after the authorisation process
    the Initiator can use the Get Sharing Agreement endpoint provided by
@@ -153,12 +162,15 @@ Table of Contents
    1.  SHALL support the dio:sharing authorisation scope;
    2.  SHALL include the dio:sharing authorisation scope within Dynamic
        Client Registration responses;
-   3.  SHALL support request objects containing an essential ID Token
-       claim named urn:dio:action_id referencing a valid _Action
-       Identifier_;
-   4.  SHALL reject request objects containing a urn:dio:action_id claim
-       that is unknown, expired or not associated with the requesting
-       Initiator;
+   3.  SHALL update the data contained within the getSharingAgreement
+       response;
+   4.  SHOULD update the authStatus with the last known stage the user-
+       agent within the consent process;
+   5.  SHALL require an ID Token claim urn:dio:action_id referencing a
+       valid _Action Identifier_;
+   6.  SHALL reject requests where the action referenced by
+       urn:dio:action_id is unknown, not associated with the Initiator
+       or in any other state other than PENDING
 
 4.1.1.  Example
 
@@ -403,36 +415,6 @@ x-v: V2
       },
       "links": {
          "self": "https://api.provider.com.au/dio-au/actions/data-sharing/e1529071-601f-46ff-a097-97cdaba84065"
-      }
-   }
-
-6.4.  Get Current Sharing Arrangement
-
-   This retrieves the arrangement details for the specified Bearer
-   token.
-
-   GET /dio-au/actions/data-sharing/self
-   Host: api.provider.com.au
-   Accept: application/json
-   Bearer: <token obtained from completed sharing request authorisation>
-   x-v: V2
-
-   Response indicates an arrangement in Active state with an expiration
-   time and set of data clusters.
-
-   {
-      "version": "V2",
-      "data": {
-         "agreementId": "e1529071-601f-46ff-a097-97cdaba84065",
-         "status": "ACTIVE",
-         "creationDateTime": "2023-09-21T14:44:16+10:00",
-         "expiryDateTime": "2024-08-21T14:44:16+10:00",
-         "dataClusters": [
-            "BANK_ACCOUNTS_BASIC_READ"
-         ]
-      },
-      "links": {
-         "self": "https://api.provider.com.au/dio-au/actions/data-sharing/self"
       }
    }
 
